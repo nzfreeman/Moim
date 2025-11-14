@@ -5,160 +5,163 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>모임비 관리</title>
 
-<!-- 인라인 PWA manifest -->
-<link rel="manifest" href='data:application/json,{
-  "name": "모임비 관리",
-  "short_name": "모임비",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#007aff"
-}'>
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS PWA 지원 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="icons/192.png">
 
 <style>
 :root {
   --bg: #f2f2f7;
   --card-bg: #ffffff;
-  --text: #111111;
-  --muted-text: #666666;
-  --header-bg: #007aff;
-  --header-text: #ffffff;
-  --nav-bg: #ffffff;
-  --border: #d1d1d6;
+  --text: #111;
+  --muted: #666;
   --accent: #007aff;
-  --accent-soft: #e5f0ff;
   --good: #34c759;
   --bad: #ff3b30;
-}
+  --border: #d1d1d6;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --card-bg: #1c1c1e;
-    --text: #f5f5f7;
-    --muted-text: #999999;
-    --header-bg: #0a84ff;
-    --header-text: #ffffff;
-    --nav-bg: #1c1c1e;
-    --border: #3a3a3c;
-    --accent: #0a84ff;
-    --accent-soft: #002b5e;
-    --good: #30d158;
-    --bad: #ff453a;
-  }
+  --font-large: 18px;
+  --font-normal: 16px;
+  --font-small: 14px;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-               "Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   color: var(--text);
 }
 
+/* Header */
 header {
   position: sticky;
   top: 0;
-  z-index: 110;
-  background: var(--header-bg);
-  color: var(--header-text);
-  text-align: center;
-  padding: 10px 8px;
-  font-size: 18px;
+  background: var(--accent);
+  color: white;
+  padding: 12px 10px 8px;
+  font-size: 20px;
   font-weight: 600;
+  text-align: center;
+  z-index: 100;
 }
 header small {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.9;
 }
 
-.top-controls {
-  margin: 8px 10px 2px 10px;
+/* 상단 컨트롤 (모임명/이월금/백업) */
+#topControls {
+  padding: 8px 10px 4px;
   font-size: 13px;
+  background: #f9f9fb;
+  border-bottom: 1px solid var(--border);
 }
-.top-controls label {
-  font-weight: 500;
-  margin-right: 4px;
-}
-.top-controls select {
-  width: auto;
-  min-width: 140px;
+#topControls span {
   display: inline-block;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  padding: 5px 10px;
-  font-size: 13px;
-  background: var(--card-bg);
-  color: var(--text);
+  margin-right: 8px;
 }
-.top-controls button {
-  font-size: 11px;
+#topControls button {
   padding: 4px 8px;
-  margin-left: 4px;
+  margin-right: 4px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text);
+  background: #fff;
+  font-size: 12px;
 }
 
-.page {
-  padding-bottom: 110px;
-}
-
+/* Card */
 .card {
   background: var(--card-bg);
-  margin: 8px 10px;
-  padding: 12px;
+  margin: 12px;
+  padding: 16px;
   border-radius: 14px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  font-size: 14px;
-  border: 1px solid rgba(0,0,0,0.02);
+  box-shadow: 0 3px 7px rgba(0,0,0,0.08);
+  font-size: var(--font-normal);
+  border: 1px solid rgba(0,0,0,0.05);
 }
 .card-title {
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .card-sub {
-  font-size: 11px;
-  color: var(--muted-text);
-  margin-bottom: 4px;
-}
-.card-actions {
-  text-align: right;
-  margin-top: 6px;
-}
-.card-actions button {
-  font-size: 11px;
-  margin-left: 4px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.02);
-  color: var(--text);
+  font-size: var(--font-small);
+  color: var(--muted);
+  margin-bottom: 6px;
 }
 
+/* Buttons */
+button {
+  font-family: inherit;
+}
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: white;
+  font-size: var(--font-large);
+  font-weight: 600;
+  border: none;
+  margin-top: 6px;
+}
+.secondary-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: var(--font-normal);
+  border: 1px solid var(--border);
+  background: white;
+  margin-top: 6px;
+}
+
+/* FAB */
+.add-btn {
+  position: fixed;
+  bottom: 90px;
+  right: 18px;
+  background: var(--accent);
+  color: white;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 36px;
+  text-align: center;
+  line-height: 56px;
+  border: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  z-index: 120;
+}
+
+/* Nav */
 nav {
   position: fixed;
-  bottom: 0; left: 0;
+  bottom: 0;
   width: 100%;
-  background: var(--nav-bg);
+  background: white;
   border-top: 1px solid var(--border);
   display: flex;
-  z-index: 120;
+  z-index: 100;
 }
 nav button {
   flex: 1;
-  padding: 6px 4px 8px 4px;
+  padding: 8px 0 10px;
+  font-size: 14px;
   border: none;
-  background: transparent;
-  font-size: 12px;
-  color: var(--muted-text);
+  background: none;
+  color: var(--muted);
 }
 nav button.active {
   color: var(--accent);
   font-weight: 600;
 }
 
+/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -168,243 +171,273 @@ nav button.active {
   z-index: 200;
 }
 .modal-content {
+  width: 90%;
+  max-width: 450px;
+  background: white;
   margin: 80px auto;
-  width: 92%;
-  max-width: 420px;
-  background: var(--card-bg);
-  padding: 16px;
-  border-radius: 16px;
-  font-size: 14px;
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  padding: 20px;
+  border-radius: 14px;
+  font-size: var(--font-normal);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
-
 input, select, textarea {
   width: 100%;
-  padding: 9px 11px;
-  border-radius: 10px;
+  padding: 12px;
+  font-size: var(--font-normal);
+  border-radius: 12px;
   border: 1px solid var(--border);
   margin: 6px 0 10px 0;
-  font-size: 14px;
-  background: var(--bg);
-  color: var(--text);
 }
 textarea { min-height: 60px; resize: vertical; }
 
-.add-btn {
-  position: fixed;
-  bottom: 78px;
-  right: 18px;
-  background: var(--accent);
-  color: white;
-  padding: 12px 15px;
-  border-radius: 50%;
-  font-size: 22px;
-  border: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-  z-index: 150;
+.page {
+  padding-bottom: 120px;
 }
 
-.table-scroll {
-  overflow-x: auto;
-}
-.table {
-  width: 100%;
+/* 테이블 */
+table {
   border-collapse: collapse;
-  font-size: 12px;
 }
-.table th,
-.table td {
-  border: 1px solid var(--border);
+th, td {
   padding: 4px 6px;
-  white-space: nowrap;
+  border: 1px solid #ddd;
 }
 
 /* 인쇄용 */
 @media print {
-  header, nav, .add-btn, .no-print {
+  header, #topControls, nav, .add-btn, .no-print {
     display: none !important;
   }
   body {
-    background: #ffffff;
-    color: #000000;
+    background: #fff;
   }
   .card {
     box-shadow: none;
     border: 1px solid #ccc;
     page-break-inside: avoid;
   }
-  .page {
-    padding: 0;
-  }
 }
 </style>
 </head>
+
 <body>
 
 <header>
   모임비 관리
-  <small>회원 · 회비/헌금/도네이션 · 지출 · 정산 · 인쇄 · 백업</small>
+  <small id="headerGroupName">여성선교회 2025년</small>
 </header>
 
-<div class="top-controls no-print">
-  <label>모임:
-    <select id="groupSelect" onchange="changeGroup()"></select>
-  </label>
-  <button onclick="openModal('groupModal')">모임 추가</button>
+<div id="topControls" class="no-print">
+  <span id="groupInfoText">모임: - / 이월금: $0.00</span>
+  <button onclick="openGroupModal()">모임/이월 설정</button>
   <button onclick="exportBackup()">백업(JSON)</button>
   <button onclick="importBackup()">복원(JSON)</button>
   <input type="file" id="backupFile" style="display:none" accept="application/json" onchange="handleBackupFile(event)">
 </div>
 
+<!-- Pages -->
 <div id="membersPage" class="page"></div>
 <div id="depositPage" class="page" style="display:none"></div>
 <div id="expensePage" class="page" style="display:none"></div>
-<div id="balancePage" class="page" style="display:none"></div>
+<div id="fastInputPage" class="page" style="display:none"></div>
+<div id="depositSummaryPage" class="page" style="display:none"></div>
+<div id="expenseSummaryPage" class="page" style="display:none"></div>
+<div id="summaryPage" class="page" style="display:none"></div>
 
+<!-- Navigation -->
 <nav class="no-print">
-  <button id="btnMembers" onclick="showPage('membersPage')">회원</button>
-  <button id="btnDeposit" onclick="showPage('depositPage')">입금·헌금</button>
-  <button id="btnExpense" onclick="showPage('expensePage')">지출</button>
-  <button id="btnBalance" onclick="showPage('balancePage')">정산</button>
+  <button id="navMembers" onclick="showPage('membersPage')">회원</button>
+  <button id="navDeposit" onclick="showPage('depositPage')">입금</button>
+  <button id="navExpense" onclick="showPage('expensePage')">지출</button>
+  <button id="navFast" onclick="showPage('fastInputPage')">빠른입력</button>
+  <button id="navSummary" onclick="showPage('summaryPage')">정산</button>
 </nav>
 
-<button class="add-btn no-print" onclick="openFAB()">+</button>
+<button class="add-btn no-print" onclick="openFAB()">＋</button>
 
-<!-- 모달: 모임 -->
+<!-- Modals -->
 <div id="groupModal" class="modal">
   <div class="modal-content">
-    <h3>모임 추가</h3>
-    <input id="groupName" placeholder="모임 이름 (예: 동창회)">
-    <button class="primary-btn" onclick="addGroup()">저장</button>
+    <h3>모임 / 이월금 설정</h3>
+    <label>모임 이름</label>
+    <input id="groupName" placeholder="예: 여성선교회 2025년">
+    <label>전년도 이월금 (NZD)</label>
+    <input id="groupOpening" type="number" step="0.01">
+    <button class="primary-btn" onclick="saveGroup()">저장</button>
     <button class="secondary-btn" onclick="closeModal('groupModal')">닫기</button>
   </div>
 </div>
 
-<!-- 모달: 회원 -->
 <div id="memberModal" class="modal">
   <div class="modal-content">
     <h3>회원 추가/수정</h3>
-    <input id="memberName" placeholder="회원 이름">
-    <input type="hidden" id="editingMemberId">
+    <input id="memberName" placeholder="이름">
+    <input id="editingMemberId" type="hidden">
     <button class="primary-btn" onclick="saveMember()">저장</button>
     <button class="secondary-btn" onclick="closeModal('memberModal')">닫기</button>
   </div>
 </div>
 
-<!-- 모달: 입금 / 헌금 / 도네이션 -->
 <div id="depositModal" class="modal">
   <div class="modal-content">
-    <h3>입금 / 헌금 / 도네이션</h3>
-    <select id="depositMember"></select>
+    <h3>입금 기록</h3>
+    <label>회원</label>
+    <select id="depositMemberSelect"></select>
+
+    <label>월 (2〜12)</label>
+    <input type="number" id="depositMonth" min="2" max="12">
+
+    <label>금액 (NZD)</label>
+    <input type="number" id="depositAmount" step="0.01">
+
+    <label>종류</label>
     <select id="depositType">
       <option value="fee">회비</option>
-      <option value="offering">헌금</option>
-      <option value="donation">도네이션</option>
+      <option value="donation">Donation</option>
     </select>
-    <input id="depositAmount" type="number" step="0.01" placeholder="금액 (NZ$)">
-    <input id="depositMemo" placeholder="메모 (선택)">
-    <input type="hidden" id="editingDepositId">
+
+    <label>메모</label>
+    <input id="depositMemo" placeholder="비워두면 자동 생성">
+
+    <input id="editingDepositId" type="hidden">
+
     <button class="primary-btn" onclick="saveDeposit()">저장</button>
     <button class="secondary-btn" onclick="closeModal('depositModal')">닫기</button>
   </div>
 </div>
 
-<!-- 모달: 지출 -->
 <div id="expenseModal" class="modal">
   <div class="modal-content">
     <h3>지출 기록</h3>
-    <input id="expenseAmount" type="number" step="0.01" placeholder="지출 금액 (NZ$)">
-    <input id="expenseMemo" placeholder="지출 내용 (예: 회식, 바자회 준비)">
-    <input id="expenseDate" type="date">
-    <div id="expenseMembers" style="font-size:13px;margin-top:4px;"></div>
-    <input type="hidden" id="editingExpenseId">
+    <label>날짜</label>
+    <input type="date" id="expenseDate">
+
+    <label>금액 (NZD)</label>
+    <input type="number" id="expenseAmount" step="0.01">
+
+    <label>내용</label>
+    <textarea id="expenseMemo" placeholder="예: 티타임, 점심, 선교헌금 등"></textarea>
+
+    <input id="editingExpenseId" type="hidden">
+
     <button class="primary-btn" onclick="saveExpense()">저장</button>
     <button class="secondary-btn" onclick="closeModal('expenseModal')">닫기</button>
   </div>
 </div>
 
 <script>
-/* ---------------- 데이터 ---------------- */
-let groups     = JSON.parse(localStorage.getItem("groups")     || "[]");
-let members    = JSON.parse(localStorage.getItem("members")    || "[]");
-let deposits   = JSON.parse(localStorage.getItem("deposits")   || "[]");
-let donations  = JSON.parse(localStorage.getItem("donations")  || "[]"); // 헌금/도네
-let expenses   = JSON.parse(localStorage.getItem("expenses")   || "[]");
+/* ========== 1. 데이터 로드 / 기본 세팅 ========== */
+let groups   = JSON.parse(localStorage.getItem("groups")   || "[]");
+let members  = JSON.parse(localStorage.getItem("members")  || "[]");
+let deposits = JSON.parse(localStorage.getItem("deposits") || "[]");
+let expenses = JSON.parse(localStorage.getItem("expenses") || "[]");
 let activeGroupId = Number(localStorage.getItem("activeGroupId") || 0);
 
-/* 초기 모임 없으면 기본 모임 생성 */
+/* 최초 실행 시 기본 모임 생성 */
 if (!groups.length) {
   const gid = Date.now();
-  groups.push({ id: gid, name: "기본 모임" });
+  groups.push({ id: gid, name: "여성선교회 2025년", openingBalance: 0 });
   activeGroupId = gid;
   saveAll();
 }
 
 function saveAll() {
-  localStorage.setItem("groups",     JSON.stringify(groups));
-  localStorage.setItem("members",    JSON.stringify(members));
-  localStorage.setItem("deposits",   JSON.stringify(deposits));
-  localStorage.setItem("donations",  JSON.stringify(donations));
-  localStorage.setItem("expenses",   JSON.stringify(expenses));
+  localStorage.setItem("groups",   JSON.stringify(groups));
+  localStorage.setItem("members",  JSON.stringify(members));
+  localStorage.setItem("deposits", JSON.stringify(deposits));
+  localStorage.setItem("expenses", JSON.stringify(expenses));
   localStorage.setItem("activeGroupId", String(activeGroupId));
 }
 
-/* 모임 선택/추가 */
-function renderGroupSelect() {
-  const sel = document.getElementById("groupSelect");
-  sel.innerHTML = groups.map(g =>
-    `<option value="${g.id}" ${g.id===activeGroupId?"selected":""}>${g.name}</option>`
-  ).join("");
+/* ========== 2. 공통 유틸 ========== */
+function getActiveGroup() {
+  return groups.find(g => g.id === activeGroupId) || groups[0];
 }
 
-function changeGroup() {
-  activeGroupId = Number(document.getElementById("groupSelect").value);
-  saveAll();
-  renderAll();
+function refreshHeader() {
+  const g = getActiveGroup();
+  if (!g) return;
+  document.getElementById("headerGroupName").innerText = g.name;
+  document.getElementById("groupInfoText").innerText =
+    `모임: ${g.name} / 이월금: $${(g.openingBalance || 0).toFixed(2)}`;
 }
 
-function addGroup() {
-  const name = document.getElementById("groupName").value.trim();
-  if (!name) return alert("모임 이름을 입력하세요");
-  const id = Date.now();
-  groups.push({id, name});
-  activeGroupId = id;
-  document.getElementById("groupName").value = "";
-  closeModal("groupModal");
-  saveAll();
-  renderAll();
-}
-
-/* 페이지 전환 */
+/* ========== 3. 페이지 전환 / FAB / 모달 ========== */
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p=>p.style.display="none");
-  document.getElementById(id).style.display="block";
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(id).style.display = "block";
 
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove("active"));
-  document.getElementById("btn"+id.replace("Page","")).classList.add("active");
+  document.querySelectorAll("nav button").forEach(btn =>
+    btn.classList.remove("active")
+  );
+  const map = {
+    membersPage: "navMembers",
+    depositPage: "navDeposit",
+    expensePage: "navExpense",
+    fastInputPage: "navFast",
+    summaryPage: "navSummary",
+    depositSummaryPage: "navDeposit",
+    expenseSummaryPage: "navExpense"
+  };
+  const navId = map[id];
+  if (navId) document.getElementById(navId).classList.add("active");
 
   renderAll();
 }
 
-/* 모달 열기/닫기 */
-function openModal(id){ document.getElementById(id).style.display='block'; }
-function closeModal(id){ document.getElementById(id).style.display='none'; }
-
-/* 플로팅 + 버튼 */
-function openFAB() {
-  if (document.getElementById("membersPage").style.display === "block") openMemberModal();
-  else if (document.getElementById("depositPage").style.display === "block") openDepositModal();
-  else if (document.getElementById("expensePage").style.display === "block") openExpenseModal();
+function isVisible(id) {
+  return document.getElementById(id).style.display === "block";
 }
 
-/* --- 회원: 추가/수정/삭제 --- */
+function openFAB() {
+  if (isVisible("membersPage"))      openMemberModal();
+  else if (isVisible("depositPage")) openDepositModal();
+  else if (isVisible("expensePage")) openExpenseModal();
+  else if (isVisible("fastInputPage")) alert("빠른 입력은 표에서 바로 수정 후 저장 버튼을 눌러주세요.");
+}
+
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
+}
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+/* ========== 4. 모임(그룹) 설정 ========== */
+function openGroupModal() {
+  const g = getActiveGroup();
+  document.getElementById("groupName").value = g?.name || "";
+  document.getElementById("groupOpening").value = g?.openingBalance || 0;
+  openModal("groupModal");
+}
+function saveGroup() {
+  const name = document.getElementById("groupName").value.trim();
+  const opening = Number(document.getElementById("groupOpening").value) || 0;
+  if (!name) return alert("모임 이름을 입력하세요.");
+
+  let g = getActiveGroup();
+  if (!g) {
+    const gid = Date.now();
+    g = { id: gid, name, openingBalance: opening };
+    groups.push(g);
+    activeGroupId = gid;
+  } else {
+    g.name = name;
+    g.openingBalance = opening;
+  }
+  saveAll();
+  closeModal("groupModal");
+  refreshHeader();
+  renderAll();
+}
+
+/* ========== 5. 회원 ========== */
 function openMemberModal(id=null) {
   document.getElementById("editingMemberId").value = id || "";
   document.getElementById("memberName").value = "";
 
   if (id) {
-    const m = members.find(x=>x.id===id);
+    const m = members.find(x => x.id === id);
     if (m) document.getElementById("memberName").value = m.name;
   }
   openModal("memberModal");
@@ -413,631 +446,527 @@ function openMemberModal(id=null) {
 function saveMember() {
   const idStr = document.getElementById("editingMemberId").value;
   const name  = document.getElementById("memberName").value.trim();
-  if (!name) return alert("이름을 입력하세요");
+  if (!name) return alert("이름을 입력하세요.");
 
   if (idStr) {
     const id = Number(idStr);
-    const idx = members.findIndex(m=>m.id===id);
-    if (idx>-1) members[idx].name = name;
+    const idx = members.findIndex(m => m.id === id);
+    if (idx > -1) members[idx].name = name;
   } else {
-    members.push({ id: Date.now(), groupId: activeGroupId, name });
+    members.push({
+      id: Date.now(),
+      groupId: activeGroupId,
+      name
+    });
   }
-
   saveAll();
   closeModal("memberModal");
-  renderAll();
+  renderMembersPage();
 }
 
 function deleteMember(id) {
-  const usedDeposit = deposits.some(d=>d.memberId===id);
-  const usedDonation = donations.some(d=>d.memberId===id);
-  const usedExpense = expenses.some(e=>e.members && e.members.includes(id));
-  if (usedDeposit || usedDonation || usedExpense) {
-    return alert("입금/헌금/도네이션/지출 기록이 있어 삭제할 수 없습니다.");
-  }
+  const usedDeposit = deposits.some(d => d.memberId === id);
+  const usedExpense = expenses.some(e => e.members?.includes(id));
+  if (usedDeposit || usedExpense)
+    return alert("입금/지출 기록이 있는 회원은 삭제할 수 없습니다.");
   if (!confirm("정말 삭제하시겠습니까?")) return;
 
-  members = members.filter(m=>m.id!==id);
+  members = members.filter(m => m.id !== id);
   saveAll();
-  renderAll();
+  renderMembersPage();
 }
 
-/* --- 입금/헌금/도네이션: 추가/수정/삭제 --- */
+function renderMembersPage() {
+  const container = document.getElementById("membersPage");
+  const gm = members.filter(m => m.groupId === activeGroupId);
+  if (!gm.length) {
+    container.innerHTML = `<div class="card">회원이 없습니다. + 버튼으로 추가하세요.</div>`;
+    return;
+  }
+  container.innerHTML = gm.map(m => `
+    <div class="card">
+      <div class="card-title">${m.name}</div>
+      <button class="secondary-btn" onclick="openMemberModal(${m.id})">수정</button>
+      <button class="secondary-btn" onclick="deleteMember(${m.id})">삭제</button>
+    </div>
+  `).join("");
+}
+
+/* ========== 6. 입금 (회비 + Donation) ========== */
 function openDepositModal(id=null) {
   document.getElementById("editingDepositId").value = id || "";
-  document.getElementById("depositAmount").value = "";
-  document.getElementById("depositMemo").value = "";
-  document.getElementById("depositType").value = "fee";
-
-  const sel = document.getElementById("depositMember");
-  const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
-  sel.innerHTML = gm.map(m=>`<option value="${m.id}">${m.name}</option>`).join("");
+  const sel = document.getElementById("depositMemberSelect");
+  const gm  = members.filter(m => m.groupId === activeGroupId);
+  sel.innerHTML = gm.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
 
   if (id) {
-    // id는 deposits 또는 donations 에 있을 수 있음
-    const d = deposits.find(x=>x.id===id);
-    const dn = donations.find(x=>x.id===id);
-
+    const d = deposits.find(x => x.id === id);
     if (d) {
       sel.value = d.memberId;
+      document.getElementById("depositMonth").value = d.month || "";
       document.getElementById("depositAmount").value = d.amount;
+      document.getElementById("depositType").value = d.type || "fee";
       document.getElementById("depositMemo").value = d.memo || "";
-      document.getElementById("depositType").value = "fee";
-    } else if (dn) {
-      sel.value = dn.memberId;
-      document.getElementById("depositAmount").value = dn.amount;
-      document.getElementById("depositMemo").value = dn.memo || "";
-      // 헌금/도네이션 구분
-      if ((dn.memo||"").includes("헌금")) {
-        document.getElementById("depositType").value = "offering";
-      } else {
-        document.getElementById("depositType").value = "donation";
-      }
     }
+  } else {
+    document.getElementById("depositMonth").value = "";
+    document.getElementById("depositAmount").value = "";
+    document.getElementById("depositType").value = "fee";
+    document.getElementById("depositMemo").value = "";
   }
-
   openModal("depositModal");
 }
 
 function saveDeposit() {
   const idStr = document.getElementById("editingDepositId").value;
-  const memberId = Number(document.getElementById("depositMember").value);
+  const memberId = Number(document.getElementById("depositMemberSelect").value);
+  const month    = Number(document.getElementById("depositMonth").value);
   const amount   = Number(document.getElementById("depositAmount").value);
-  const memo     = document.getElementById("depositMemo").value.trim();
   const type     = document.getElementById("depositType").value;
+  let memo       = document.getElementById("depositMemo").value.trim();
 
-  if (!memberId || !amount) return alert("회원과 금액을 입력하세요");
+  if (!memberId || !amount)
+    return alert("회원과 금액은 필수입니다.");
+
+  if (!memo) {
+    if (type === "fee" && month) memo = `${month}월 회비`;
+    else if (type === "donation") memo = "Donation";
+  }
 
   if (idStr) {
     const id = Number(idStr);
-    // 기존 기록 수정
-    let dIdx = deposits.findIndex(d=>d.id===id);
-    let dnIdx = donations.findIndex(d=>d.id===id);
-
-    if (type === "fee") {
-      // 회비로 저장
-      if (dnIdx>-1) donations.splice(dnIdx,1); // 도네에 있었다면 삭제
-      if (dIdx>-1) {
-        deposits[dIdx].memberId = memberId;
-        deposits[dIdx].amount   = amount;
-        deposits[dIdx].memo     = memo || "회비";
-      } else {
-        deposits.push({
-          id,
-          groupId: activeGroupId,
-          memberId,
-          amount,
-          memo: memo || "회비"
-        });
-      }
-    } else {
-      // 헌금/도네이션으로 저장
-      if (dIdx>-1) deposits.splice(dIdx,1); // 회비에서 삭제
-      const label = type === "offering" ? "헌금" : "도네이션";
-      if (dnIdx>-1) {
-        donations[dnIdx].memberId = memberId;
-        donations[dnIdx].amount   = amount;
-        donations[dnIdx].memo     = memo || label;
-      } else {
-        donations.push({
-          id,
-          groupId: activeGroupId,
-          memberId,
-          amount,
-          memo: memo || label
-        });
-      }
+    const idx = deposits.findIndex(d => d.id === id);
+    if (idx > -1) {
+      deposits[idx].memberId = memberId;
+      deposits[idx].month = month;
+      deposits[idx].amount = amount;
+      deposits[idx].type = type;
+      deposits[idx].memo = memo;
     }
   } else {
-    const newId = Date.now();
-    if (type === "fee") {
-      deposits.push({
-        id: newId,
-        groupId: activeGroupId,
-        memberId,
-        amount,
-        memo: memo || "회비"
-      });
-    } else {
-      const label = type === "offering" ? "헌금" : "도네이션";
-      donations.push({
-        id: newId,
-        groupId: activeGroupId,
-        memberId,
-        amount,
-        memo: memo || label
-      });
-    }
+    deposits.push({
+      id: Date.now(),
+      groupId: activeGroupId,
+      memberId,
+      month,
+      amount,
+      type,
+      memo
+    });
   }
-
   saveAll();
   closeModal("depositModal");
-  renderAll();
+  renderDepositPage();
 }
 
-function deleteDepositRecord(id) {
-  if (!confirm("이 기록을 삭제할까요?")) return;
-  deposits = deposits.filter(d=>d.id!==id);
-  donations = donations.filter(d=>d.id!==id);
+function deleteDeposit(id) {
+  if (!confirm("이 입금 기록을 삭제하시겠습니까?")) return;
+  deposits = deposits.filter(d => d.id !== id);
   saveAll();
-  renderAll();
+  renderDepositPage();
 }
 
-/* --- 지출: 추가/수정/삭제 --- */
-function openExpenseModal(id=null) {
-  document.getElementById("editingExpenseId").value = id || "";
-  document.getElementById("expenseAmount").value = "";
-  document.getElementById("expenseMemo").value = "";
-  const dateInput = document.getElementById("expenseDate");
-  dateInput.value = new Date().toISOString().slice(0,10);
+function renderDepositPage() {
+  const container = document.getElementById("depositPage");
+  const list = deposits.filter(d => d.groupId === activeGroupId);
 
-  const container = document.getElementById("expenseMembers");
-  const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
-
-  container.innerHTML = gm.map(m=>`
-      <label style="display:block;margin-bottom:3px;">
-        <input type="checkbox" class="exp-check" value="${m.id}"> ${m.name}
-      </label>
-  `).join("");
-
-  if (id) {
-    const e = expenses.find(x=>x.id===id);
-    if (e) {
-      document.getElementById("expenseAmount").value = e.amount;
-      document.getElementById("expenseMemo").value = e.memo || "";
-      if (e.date) dateInput.value = e.date;
-
-      (e.members || []).forEach(mid=>{
-        const cb = container.querySelector(`input[value="${mid}"]`);
-        if (cb) cb.checked = true;
-      });
-    }
+  if (!list.length) {
+    container.innerHTML = `<div class="card">입금 기록이 없습니다.</div>`;
+    return;
   }
 
+  container.innerHTML = `
+    <div class="card no-print">
+      <div class="card-title">입금 내역</div>
+      <div class="card-sub">회비와 Donation 기록입니다.</div>
+    </div>
+  ` + list.map(d => {
+    const m = members.find(x => x.id === d.memberId);
+    return `
+      <div class="card">
+        <div class="card-title">${m?.name || "(탈퇴 회원)"} — $${d.amount.toFixed(2)}</div>
+        <div class="card-sub">${d.type === "donation" ? "[Donation] " : ""}${d.memo || ""}</div>
+        <button class="secondary-btn" onclick="openDepositModal(${d.id})">수정</button>
+        <button class="secondary-btn" onclick="deleteDeposit(${d.id})">삭제</button>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ========== 7. 지출 ========== */
+function openExpenseModal(id=null) {
+  document.getElementById("editingExpenseId").value = id || "";
+  document.getElementById("expenseDate").value = "";
+  document.getElementById("expenseAmount").value = "";
+  document.getElementById("expenseMemo").value = "";
+
+  if (id) {
+    const e = expenses.find(x => x.id === id);
+    if (e) {
+      document.getElementById("expenseDate").value = e.date;
+      document.getElementById("expenseAmount").value = e.amount;
+      document.getElementById("expenseMemo").value = e.memo || "";
+    }
+  }
   openModal("expenseModal");
 }
 
 function saveExpense() {
   const idStr = document.getElementById("editingExpenseId").value;
+  const date  = document.getElementById("expenseDate").value;
   const amount = Number(document.getElementById("expenseAmount").value);
   const memo   = document.getElementById("expenseMemo").value.trim();
-  const date   = document.getElementById("expenseDate").value;
-  const selected = [...document.querySelectorAll(".exp-check:checked")].map(x=>Number(x.value));
 
-  if (!amount) return alert("금액을 입력하세요");
-
-  // 참여자 없으면 -> 전체 회원
-  const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
-  const participants = selected.length ? selected : gm.map(m=>m.id);
+  if (!date || !amount) return alert("날짜와 금액은 필수입니다.");
 
   if (idStr) {
     const id = Number(idStr);
-    const idx = expenses.findIndex(e=>e.id===id);
-    if (idx>-1) {
-      expenses[idx].amount  = amount;
-      expenses[idx].memo    = memo;
-      expenses[idx].members = participants;
-      expenses[idx].date    = date;
+    const idx = expenses.findIndex(e => e.id === id);
+    if (idx > -1) {
+      expenses[idx].date = date;
+      expenses[idx].amount = amount;
+      expenses[idx].memo = memo;
     }
   } else {
     expenses.push({
       id: Date.now(),
       groupId: activeGroupId,
+      date,
       amount,
       memo,
-      members: participants,
-      date
+      members: [],
+      share: 0
     });
   }
-
   saveAll();
   closeModal("expenseModal");
-  renderAll();
+  renderExpensePage();
 }
 
 function deleteExpense(id) {
-  if (!confirm("이 지출 기록을 삭제할까요?")) return;
-  expenses = expenses.filter(e=>e.id!==id);
+  if (!confirm("이 지출 기록을 삭제하시겠습니까?")) return;
+  expenses = expenses.filter(e => e.id !== id);
   saveAll();
-  renderAll();
+  renderExpensePage();
 }
 
-/* --- CSV / 백업 기능 --- */
-function exportCSV(type) {
-  const gId = activeGroupId;
-  let csv = "";
+function renderExpensePage() {
+  const container = document.getElementById("expensePage");
+  const list = expenses.filter(e => e.groupId === activeGroupId);
+  if (!list.length) {
+    container.innerHTML = `<div class="card">지출 내역이 없습니다.</div>`;
+    return;
+  }
+  list.sort((a,b) => (a.date || "").localeCompare(b.date || ""));
 
-  if (type==="deposits") {
-    csv += "member,type,amount,memo\n";
-    // 회비
-    deposits.filter(d=>d.groupId===gId || d.groupId===undefined)
-      .forEach(d=>{
-        const m = members.find(x=>x.id===d.memberId);
-        const safeName = m ? m.name.replace(/"/g,'""') : "";
-        const safeMemo = (d.memo || "").replace(/"/g,'""');
-        csv += `"${safeName}","회비",${d.amount},"${safeMemo}"\n`;
-      });
-    // 헌금/도네이션
-    donations.filter(d=>d.groupId===gId || d.groupId===undefined)
-      .forEach(d=>{
-        const m = members.find(x=>x.id===d.memberId);
-        const safeName = m ? m.name.replace(/"/g,'""') : "";
-        const safeMemo = (d.memo || "").replace(/"/g,'""');
-        csv += `"${safeName}","도네이션/헌금",${d.amount},"${safeMemo}"\n`;
-      });
+  container.innerHTML = `
+    <div class="card no-print">
+      <div class="card-title">지출 내역</div>
+      <div class="card-sub">모임비 사용 내역입니다.</div>
+    </div>
+  ` + list.map(e => `
+    <div class="card">
+      <div class="card-title">${e.date} – $${e.amount.toFixed(2)}</div>
+      <div class="card-sub">${e.memo || ""}</div>
+      <button class="secondary-btn" onclick="openExpenseModal(${e.id})">수정</button>
+      <button class="secondary-btn" onclick="deleteExpense(${e.id})">삭제</button>
+    </div>
+  `).join("");
+}
 
-  } else if (type==="expenses") {
-    csv += "date,amount,memo,participants\n";
-    expenses.filter(e=>e.groupId===gId || e.groupId===undefined)
-      .forEach(e=>{
-        const safeMemo = (e.memo || "").replace(/"/g,'""');
-        const names = (e.members || []).map(id=>{
-          const m = members.find(mm=>mm.id===id);
-          return m?m.name:"";
-        }).join(";").replace(/"/g,'""');
-        csv += `"${e.date||""}",${e.amount},"${safeMemo}","${names}"\n`;
-      });
+/* ========== 8. 빠른 입력 (2~12월 + Donation) ========== */
+function renderFastInputPage() {
+  const container = document.getElementById("fastInputPage");
+  const gm = members.filter(m => m.groupId === activeGroupId);
 
-  } else if (type==="summary") {
-    // 회원별 회비/헌금/도네이션 요약
-    const summary = calcMemberIncomeSummary();
-    csv += "member,fee,offering,donation,total\n";
-    summary.forEach(s=>{
-      const safeName = s.name.replace(/"/g,'""');
-      csv += `"${safeName}",${s.fee},${s.offering},${s.donation},${s.total}\n`;
-    });
-  } else {
+  if (!gm.length) {
+    container.innerHTML = `<div class="card">회원이 없습니다. 먼저 회원을 등록하세요.</div>`;
     return;
   }
 
-  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `moim_${type}_${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+  let html = `
+    <div class="card">
+      <div class="card-title">빠른 입력</div>
+      <div class="card-sub">2〜12월 회비와 Donation을 한 번에 입력합니다.</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; font-size:13px;">
+          <thead>
+            <tr style="background:#f0f0f0;">
+              <th>회원</th>
+              ${Array.from({length:11}, (_,i)=>`<th>${i+2}월</th>`).join("")}
+              <th>Donation</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+  gm.forEach(m => {
+    html += `<tr><td>${m.name}</td>`;
+    for (let mo = 2; mo <= 12; mo++) {
+      const d = deposits.find(d => d.memberId === m.id && d.month === mo && d.type === "fee");
+      const val = d ? d.amount : "";
+      html += `<td><input style="width:60px" id="fi_${m.id}_${mo}" value="${val}"></td>`;
+    }
+    const don = deposits.find(d => d.memberId === m.id && d.type === "donation");
+    html += `<td><input style="width:80px" id="fi_${m.id}_don" value="${don?.amount || ""}"></td>`;
+    html += `</tr>`;
+  });
+
+  html += `
+          </tbody>
+        </table>
+      </div>
+      <button class="primary-btn" onclick="saveFastInput()">저장</button>
+    </div>
+  `;
+
+  container.innerHTML = html;
 }
 
+function saveFastInput() {
+  const gm = members.filter(m => m.groupId === activeGroupId);
+
+  gm.forEach(m => {
+    for (let mo = 2; mo <= 12; mo++) {
+      const el = document.getElementById(`fi_${m.id}_${mo}`);
+      if (!el) continue;
+      const val = Number(el.value);
+      deposits = deposits.filter(d => !(d.memberId === m.id && d.month === mo && d.type === "fee"));
+      if (val > 0) {
+        deposits.push({
+          id: Date.now() + Math.random(),
+          groupId: activeGroupId,
+          memberId: m.id,
+          month: mo,
+          amount: val,
+          type: "fee",
+          memo: `${mo}월 회비`
+        });
+      }
+    }
+    const dEl = document.getElementById(`fi_${m.id}_don`);
+    const dVal = Number(dEl.value);
+    deposits = deposits.filter(d => !(d.memberId === m.id && d.type === "donation"));
+    if (dVal > 0) {
+      deposits.push({
+        id: Date.now() + Math.random(),
+        groupId: activeGroupId,
+        memberId: m.id,
+        month: 12,
+        amount: dVal,
+        type: "donation",
+        memo: "Donation"
+      });
+    }
+  });
+
+  saveAll();
+  alert("빠른 입력 저장 완료!");
+  renderFastInputPage();
+}
+
+/* ========== 9. 시트1 스타일: 회원별 입금 요약 ========== */
+function renderDepositSummaryPage() {
+  const container = document.getElementById("depositSummaryPage");
+  const gm = members.filter(m => m.groupId === activeGroupId);
+
+  if (!gm.length) {
+    container.innerHTML = `<div class="card">회원이 없습니다.</div>`;
+    return;
+  }
+
+  let html = `
+    <div class="card no-print">
+      <div class="card-title">회원별 회비/Donation 요약</div>
+      <div class="card-sub">2〜12월 회비와 Donation 합계를 보여줍니다. (출력은 브라우저 인쇄 기능 사용)</div>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table style="width:100%; font-size:13px;">
+          <thead>
+            <tr style="background:#f0f0f0;">
+              <th>회원</th>
+              ${Array.from({length:11}, (_,i)=>`<th>${i+2}월</th>`).join("")}
+              <th>Donation</th>
+              <th>합계</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+  gm.forEach(m => {
+    let rowSum = 0;
+    html += `<tr><td>${m.name}</td>`;
+    for (let mo = 2; mo <= 12; mo++) {
+      const d = deposits.find(d => d.memberId === m.id && d.month === mo && d.type === "fee");
+      const val = d ? d.amount : 0;
+      rowSum += val;
+      html += `<td style="text-align:center">${val ? "$"+val.toFixed(2) : ""}</td>`;
+    }
+    const don = deposits.find(d => d.memberId === m.id && d.type === "donation");
+    const dVal = don ? don.amount : 0;
+    rowSum += dVal;
+    html += `<td style="text-align:center">${dVal ? "$"+dVal.toFixed(2) : ""}</td>`;
+    html += `<td style="text-align:center; font-weight:600">$${rowSum.toFixed(2)}</td>`;
+    html += `</tr>`;
+  });
+
+  html += `
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+/* ========== 10. 시트2 스타일: 지출 요약 ========== */
+function renderExpenseSummaryPage() {
+  const container = document.getElementById("expenseSummaryPage");
+  const list = expenses.filter(e => e.groupId === activeGroupId);
+  if (!list.length) {
+    container.innerHTML = `<div class="card">지출 내역이 없습니다.</div>`;
+    return;
+  }
+
+  list.sort((a,b) => (a.date || "").localeCompare(b.date || ""));
+
+  let html = `
+    <div class="card no-print">
+      <div class="card-title">지출 요약</div>
+      <div class="card-sub">엑셀 시트2 형태로 출력할 수 있습니다. (인쇄 기능 사용)</div>
+    </div>
+    <div class="card">
+      <table style="width:100%; font-size:13px;">
+        <thead>
+          <tr style="background:#f0f0f0;">
+            <th>날짜</th>
+            <th>내용</th>
+            <th>금액</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  list.forEach(e => {
+    html += `
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.memo || ""}</td>
+        <td style="text-align:right">$${e.amount.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+  container.innerHTML = html;
+}
+
+/* ========== 11. 정산 페이지 (이월 + 입금 + 지출) ========== */
+function renderSummaryPage() {
+  const container = document.getElementById("summaryPage");
+  const g = getActiveGroup();
+  if (!g) {
+    container.innerHTML = `<div class="card">모임 정보가 없습니다.</div>`;
+    return;
+  }
+  const opening = g.openingBalance || 0;
+  const totalDeposit = deposits.filter(d => d.groupId === activeGroupId)
+    .reduce((a,b)=>a+b.amount,0);
+  const totalExpense = expenses.filter(e => e.groupId === activeGroupId)
+    .reduce((a,b)=>a+b.amount,0);
+  const finalBalance = opening + totalDeposit - totalExpense;
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-title">정산 요약</div>
+      <div>전년도 이월금: <b>$${opening.toFixed(2)}</b></div>
+      <div>총 입금 (회비+Donation): <b>$${totalDeposit.toFixed(2)}</b></div>
+      <div>총 지출: <b>$${totalExpense.toFixed(2)}</b></div>
+      <hr>
+      <div style="font-size:20px; font-weight:700;">
+        잔액: $${finalBalance.toFixed(2)}
+      </div>
+    </div>
+    <div class="card no-print">
+      <div class="card-sub">상단 브라우저 메뉴의 인쇄 기능을 이용해 정산 내역을 출력할 수 있습니다.</div>
+    </div>
+  `;
+}
+
+/* ========== 12. 백업 / 복원 (JSON) ========== */
 function exportBackup() {
-  const data = { groups, members, deposits, donations, expenses, activeGroupId };
-  const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+  const data = {
+    groups,
+    members,
+    deposits,
+    expenses,
+    activeGroupId
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `moim_backup_${new Date().toISOString().slice(0,10)}.json`;
+  const today = new Date().toISOString().slice(0,10);
+  a.download = `moim_backup_${today}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
 
 function importBackup() {
+  document.getElementById("backupFile").value = "";
   document.getElementById("backupFile").click();
 }
 
 function handleBackupFile(e) {
   const file = e.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = ev => {
     try {
       const data = JSON.parse(ev.target.result);
-      groups     = data.groups;
-      members    = data.members;
-      deposits   = data.deposits || [];
-      donations  = data.donations || [];
-      expenses   = data.expenses || [];
+      groups       = data.groups || [];
+      members      = data.members || [];
+      deposits     = data.deposits || [];
+      expenses     = data.expenses || [];
       activeGroupId = data.activeGroupId || (groups[0] && groups[0].id);
       saveAll();
+      refreshHeader();
       renderAll();
       alert("복원 완료!");
     } catch (err) {
-      alert("복원 실패. 파일 형식을 확인하세요.");
+      console.error(err);
+      alert("복원 실패. JSON 형식을 확인하세요.");
     }
   };
   reader.readAsText(file, "utf-8");
 }
 
-/* --- 합계 / 정산 계산 --- */
-function calcTotals() {
-  const gId = activeGroupId;
-
-  const totalFee = deposits
-    .filter(d=>d.groupId===gId || d.groupId===undefined)
-    .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-  const totalOffering = donations
-    .filter(d=> (d.groupId===gId || d.groupId===undefined) && (d.memo||"").includes("헌금"))
-    .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-  const totalDonation = donations
-    .filter(d=> (d.groupId===gId || d.groupId===undefined) && !(d.memo||"").includes("헌금"))
-    .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-  const totalIncome = totalFee + totalOffering + totalDonation;
-
-  const totalExpense = expenses
-    .filter(e=>e.groupId===gId || e.groupId===undefined)
-    .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-  const balance = totalIncome - totalExpense;
-
-  return { totalFee, totalOffering, totalDonation, totalIncome, totalExpense, balance };
-}
-
-function calcMemberIncomeSummary() {
-  const gId = activeGroupId;
-  const gm = members.filter(m=>m.groupId===gId || m.groupId===undefined);
-
-  return gm.map(m=>{
-    const fee = deposits
-      .filter(d=> (d.groupId===gId || d.groupId===undefined) && d.memberId===m.id)
-      .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-    const offering = donations
-      .filter(d=> (d.groupId===gId || d.groupId===undefined) && d.memberId===m.id && (d.memo||"").includes("헌금"))
-      .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-    const donation = donations
-      .filter(d=> (d.groupId===gId || d.groupId===undefined) && d.memberId===m.id && !(d.memo||"").includes("헌금"))
-      .reduce((a,b)=>a + Number(b.amount||0), 0);
-
-    return {
-      memberId: m.id,
-      name: m.name,
-      fee,
-      offering,
-      donation,
-      total: fee + offering + donation
-    };
-  }).filter(s=>s.fee || s.offering || s.donation || s.total);
-}
-
-/* --- 각 페이지 렌더링 --- */
-function renderMembersPage() {
-  const gId = activeGroupId;
-  const gm = members.filter(m=>m.groupId===gId || m.groupId===undefined);
-  const container = document.getElementById("membersPage");
-
-  if (!gm.length) {
-    container.innerHTML =
-      `<div class="card">회원이 없습니다. 우측 하단 + 버튼으로 추가하세요.</div>`;
-    return;
-  }
-
-  container.innerHTML = gm.map(m=>`
-    <div class="card">
-      <div class="card-title">${m.name}</div>
-      <div class="card-actions">
-        <button onclick="openMemberModal(${m.id})">수정</button>
-        <button onclick="deleteMember(${m.id})">삭제</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-function renderDepositPage() {
-  const gId = activeGroupId;
-  const gDep = deposits.filter(d=>d.groupId===gId || d.groupId===undefined);
-  const gDon = donations.filter(d=>d.groupId===gId || d.groupId===undefined);
-  const container = document.getElementById("depositPage");
-
-  let html = `
-    <div class="card no-print">
-      <div class="card-title">입금 / 헌금 / 도네이션 내역</div>
-      <div class="card-sub">회원별 회비 및 헌금/도네이션 입금 기록입니다.</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="secondary-btn" style="flex:1;" onclick="exportCSV('deposits')">입금 CSV</button>
-        <button class="secondary-btn" style="flex:1;" onclick="exportCSV('summary')">회원별 요약 CSV</button>
-      </div>
-    </div>
-  `;
-
-  if (!gDep.length && !gDon.length) {
-    html += `<div class="card">입금/헌금/도네이션 기록이 없습니다. + 버튼으로 추가하세요.</div>`;
-  } else {
-    const all = [
-      ...gDep.map(d=>({ ...d, _kind:"fee" })),
-      ...gDon.map(d=>({ ...d, _kind:"donation" }))
-    ].sort((a,b)=>a.id - b.id);
-
-    html += all.map(d=>{
-      const m = members.find(x=>x.id===d.memberId);
-      const label = d._kind==="fee"
-        ? (d.memo || "회비")
-        : (d.memo || "도네이션");
-      return `
-        <div class="card">
-          <div class="card-title">
-            ${m?m.name:"(탈퇴 회원)"} – $${Number(d.amount||0).toLocaleString()}
-          </div>
-          <div class="card-sub">${label}</div>
-          <div class="card-actions">
-            <button onclick="openDepositModal(${d.id})">수정</button>
-            <button onclick="deleteDepositRecord(${d.id})">삭제</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  container.innerHTML = html;
-}
-
-function renderExpensePage() {
-  const gId = activeGroupId;
-  const gExp = expenses.filter(e=>e.groupId===gId || e.groupId===undefined);
-  const container = document.getElementById("expensePage");
-
-  let html = `
-    <div class="card no-print">
-      <div class="card-title">지출 내역</div>
-      <div class="card-sub">모임비 사용 내역입니다. 1인 부담액은 계산하지 않고 전체 회계만 관리합니다.</div>
-      <button class="secondary-btn" onclick="exportCSV('expenses')">지출 CSV 내보내기</button>
-    </div>
-  `;
-
-  if (!gExp.length) {
-    html += `<div class="card">지출 기록이 없습니다. + 버튼으로 추가하세요.</div>`;
-  } else {
-    html += gExp.map(e=>{
-      const names = (e.members || []).map(id=>{
-        const m = members.find(mm=>mm.id===id);
-        return m?m.name:"";
-      }).filter(x=>x).join(", ");
-
-      return `
-        <div class="card">
-          <div class="card-title">
-            ${e.date || ""} – $${Number(e.amount||0).toLocaleString()}
-          </div>
-          <div class="card-sub">${e.memo || "지출"}</div>
-          <div style="font-size:13px;">참여: ${names || "전체"}</div>
-          <div class="card-actions">
-            <button onclick="openExpenseModal(${e.id})">수정</button>
-            <button onclick="deleteExpense(${e.id})">삭제</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  container.innerHTML = html;
-}
-
-function renderBalancePage() {
-  const container = document.getElementById("balancePage");
-  const totals = calcTotals();
-  const memberSummary = calcMemberIncomeSummary();
-  const gId = activeGroupId;
-
-  const gExp = expenses.filter(e=>e.groupId===gId || e.groupId===undefined);
-
-  let html = `
-    <div class="card no-print">
-      <div class="card-title">정산 요약</div>
-      <div>총 회비: $${totals.totalFee.toLocaleString()}</div>
-      <div>총 헌금: $${totals.totalOffering.toLocaleString()}</div>
-      <div>총 도네이션: $${totals.totalDonation.toLocaleString()}</div>
-      <div style="margin-top:4px;">총 입금 합계: <b>$${totals.totalIncome.toLocaleString()}</b></div>
-      <div>총 지출 합계: <b>$${totals.totalExpense.toLocaleString()}</b></div>
-      <div style="margin-top:4px;">남은 잔액 (입금 - 지출): 
-        <b style="color:${totals.balance>=0?'var(--good)':'var(--bad)'};">
-          $${totals.balance.toLocaleString()}
-        </b>
-      </div>
-      <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="secondary-btn" style="flex:1;" onclick="window.print()">이 페이지 인쇄</button>
-      </div>
-    </div>
-  `;
-
-  // 시트1 스타일: 회원별 회비/헌금/도네이션 요약
-  html += `
-    <div class="card">
-      <div class="card-title">회원별 입금 요약 (시트1 스타일)</div>
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>회원</th>
-              <th>회비 합계</th>
-              <th>헌금 합계</th>
-              <th>도네이션 합계</th>
-              <th>총 입금</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${
-              memberSummary.length
-              ? memberSummary.map(s=>`
-                <tr>
-                  <td>${s.name}</td>
-                  <td>$${s.fee.toLocaleString()}</td>
-                  <td>$${s.offering.toLocaleString()}</td>
-                  <td>$${s.donation.toLocaleString()}</td>
-                  <td><b>$${s.total.toLocaleString()}</b></td>
-                </tr>
-              `).join("")
-              : `<tr><td colspan="5">입금 기록이 없습니다.</td></tr>`
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
-
-  // 시트2 스타일: 지출 내역 표
-  html += `
-    <div class="card">
-      <div class="card-title">지출 내역 표 (시트2 스타일)</div>
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>날짜</th>
-              <th>금액 (NZ$)</th>
-              <th>내용</th>
-              <th>참여자</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${
-              gExp.length
-              ? gExp.map(e=>{
-                  const names = (e.members || []).map(id=>{
-                    const m = members.find(mm=>mm.id===id);
-                    return m?m.name:"";
-                  }).filter(x=>x).join(", ");
-                  return `
-                    <tr>
-                      <td>${e.date || ""}</td>
-                      <td>$${Number(e.amount||0).toLocaleString()}</td>
-                      <td>${e.memo || ""}</td>
-                      <td>${names || "전체"}</td>
-                    </tr>
-                  `;
-                }).join("")
-              : `<tr><td colspan="4">지출 기록이 없습니다.</td></tr>`
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
-
-  container.innerHTML = html;
-}
-
-/* 전체 렌더 */
+/* ========== 13. 전체 렌더 + 초기 진입 페이지 ========== */
 function renderAll() {
-  renderGroupSelect();
+  refreshHeader();
   renderMembersPage();
   renderDepositPage();
   renderExpensePage();
-  renderBalancePage();
+  renderFastInputPage();
+  renderDepositSummaryPage();
+  renderExpenseSummaryPage();
+  renderSummaryPage();
 }
 
-/* 초기 실행 */
-showPage("membersPage");
-renderAll();
+/* 초기: '입금' 페이지를 첫 화면으로 */
+showPage("depositPage");
 
-/* --- PWA Service Worker (inline) --- */
-if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-  const swCode = `
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open('moim-cache-v1').then(c => c.addAll(['./']))
-  );
-});
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(r => r || fetch(event.request))
-  );
-});
-`;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob));
+/* ========== 14. PWA Service Worker 등록 ========== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.log('ServiceWorker 등록 실패:', err);
+    });
+  });
 }
 </script>
 
