@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>모임비 관리</title>
 
-<!-- 인라인 PWA manifest (data URI) -->
-<link rel="manifest" href="data:application/json,{
-  &quot;name&quot;: &quot;모임비 관리&quot;,
-  &quot;short_name&quot;: &quot;모임비&quot;,
-  &quot;start_url&quot;: &quot;.&quot;,
-  &quot;display&quot;: &quot;standalone&quot;,
-  &quot;background_color&quot;: &quot;#ffffff&quot;,
-  &quot;theme_color&quot;: &quot;#007aff&quot;
-}">
+<!-- 인라인 PWA manifest -->
+<link rel="manifest" href='data:application/json,{
+  "name": "모임비 관리",
+  "short_name": "모임비",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007aff"
+}'>
 
 <style>
 :root {
@@ -48,7 +48,6 @@
   }
 }
 
-/* 기본 스타일 */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
@@ -74,7 +73,6 @@ header small {
   opacity: 0.9;
 }
 
-/* 상단 컨트롤 */
 .top-controls {
   margin: 8px 10px 2px 10px;
   font-size: 13px;
@@ -104,12 +102,10 @@ header small {
   color: var(--text);
 }
 
-/* 페이지 */
 .page {
   padding-bottom: 110px;
 }
 
-/* 카드 */
 .card {
   background: var(--card-bg);
   margin: 8px 10px;
@@ -139,16 +135,13 @@ header small {
   border: 1px solid var(--border);
   background: rgba(0,0,0,0.02);
   color: var(--text);
-  padding: 4px 8px;
 }
 
-/* 하단 탭 */
 nav {
   position: fixed;
   bottom: 0; left: 0;
   width: 100%;
-  background: rgba( var(--nav-bg-rgb,255,255,255), 0.94 );
-  backdrop-filter: blur(20px);
+  background: var(--nav-bg);
   border-top: 1px solid var(--border);
   display: flex;
   z-index: 120;
@@ -166,7 +159,6 @@ nav button.active {
   font-weight: 600;
 }
 
-/* 모달 */
 .modal {
   display: none;
   position: fixed;
@@ -186,13 +178,7 @@ nav button.active {
   border: 1px solid var(--border);
   box-shadow: 0 8px 20px rgba(0,0,0,0.35);
 }
-.modal-content h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 16px;
-}
 
-/* 입력 요소 */
 input, select, textarea {
   width: 100%;
   padding: 9px 11px;
@@ -200,39 +186,11 @@ input, select, textarea {
   border: 1px solid var(--border);
   margin: 6px 0 10px 0;
   font-size: 14px;
-  box-sizing: border-box;
   background: var(--bg);
   color: var(--text);
 }
 textarea { min-height: 60px; resize: vertical; }
 
-/* 메인 액션 버튼 */
-button {
-  font-family: inherit;
-}
-.primary-btn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 999px;
-  border: none;
-  background: var(--accent);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 14px;
-  margin-top: 4px;
-}
-.secondary-btn {
-  width: 100%;
-  padding: 9px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  font-size: 13px;
-  margin-top: 4px;
-}
-
-/* 플로팅 + 버튼 */
 .add-btn {
   position: fixed;
   bottom: 78px;
@@ -247,7 +205,6 @@ button {
   z-index: 150;
 }
 
-/* 잔액 차트 */
 #balanceChart {
   width: 100%;
   max-width: 600px;
@@ -256,7 +213,6 @@ button {
   margin: 4px auto 0 auto;
 }
 
-/* 인쇄용 스타일 */
 @media print {
   header, nav, .add-btn, .no-print {
     display: none !important;
@@ -276,7 +232,6 @@ button {
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -307,7 +262,6 @@ button {
 </nav>
 
 <button class="add-btn no-print" onclick="openFAB()">+</button>
-
 <!-- 모달: 모임 -->
 <div id="groupModal" class="modal">
   <div class="modal-content">
@@ -386,11 +340,13 @@ function renderGroupSelect() {
     `<option value="${g.id}" ${g.id===activeGroupId?"selected":""}>${g.name}</option>`
   ).join("");
 }
+
 function changeGroup() {
   activeGroupId = Number(document.getElementById("groupSelect").value);
   saveAll();
   renderAll();
 }
+
 function addGroup() {
   const name = document.getElementById("groupName").value.trim();
   if (!name) return alert("모임 이름을 입력하세요");
@@ -424,17 +380,18 @@ function openFAB() {
   else if (document.getElementById("depositPage").style.display === "block") openDepositModal();
   else if (document.getElementById("expensePage").style.display === "block") openExpenseModal();
 }
-
-/* --- 회원: 추가/수정/삭제 --- */
+  /* --- 회원: 추가/수정/삭제 --- */
 function openMemberModal(id=null) {
   document.getElementById("editingMemberId").value = id || "";
   document.getElementById("memberName").value = "";
+
   if (id) {
     const m = members.find(x=>x.id===id);
     if (m) document.getElementById("memberName").value = m.name;
   }
   openModal("memberModal");
 }
+
 function saveMember() {
   const idStr = document.getElementById("editingMemberId").value;
   const name  = document.getElementById("memberName").value.trim();
@@ -447,10 +404,12 @@ function saveMember() {
   } else {
     members.push({ id: Date.now(), groupId: activeGroupId, name });
   }
+
   saveAll();
   closeModal("memberModal");
   renderAll();
 }
+
 function deleteMember(id) {
   const usedDeposit = deposits.some(d=>d.memberId===id);
   const usedExpense = expenses.some(e=>e.members.includes(id));
@@ -458,6 +417,7 @@ function deleteMember(id) {
     return alert("입금/지출 기록이 있어 삭제할 수 없습니다.");
   }
   if (!confirm("정말 삭제하시겠습니까?")) return;
+
   members = members.filter(m=>m.id!==id);
   saveAll();
   renderAll();
@@ -471,6 +431,7 @@ function openDepositModal(id=null) {
 
   const sel = document.getElementById("depositMember");
   const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
+
   sel.innerHTML = gm.map(m=>`<option value="${m.id}">${m.name}</option>`).join("");
 
   if (id) {
@@ -481,8 +442,10 @@ function openDepositModal(id=null) {
       document.getElementById("depositMemo").value = d.memo || "";
     }
   }
+
   openModal("depositModal");
 }
+
 function saveDeposit() {
   const idStr = document.getElementById("editingDepositId").value;
   const memberId = Number(document.getElementById("depositMember").value);
@@ -508,10 +471,12 @@ function saveDeposit() {
       memo
     });
   }
+
   saveAll();
   closeModal("depositModal");
   renderAll();
 }
+
 function deleteDeposit(id) {
   if (!confirm("이 입금 기록을 삭제할까요?")) return;
   deposits = deposits.filter(d=>d.id!==id);
@@ -527,6 +492,7 @@ function openExpenseModal(id=null) {
 
   const container = document.getElementById("expenseMembers");
   const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
+
   container.innerHTML = gm.map(m=>`
       <label style="display:block;margin-bottom:3px;">
         <input type="checkbox" class="exp-check" value="${m.id}"> ${m.name}
@@ -538,14 +504,17 @@ function openExpenseModal(id=null) {
     if (e) {
       document.getElementById("expenseAmount").value = e.amount;
       document.getElementById("expenseMemo").value = e.memo || "";
+
       e.members.forEach(mid=>{
         const cb = container.querySelector(\`input[value="\${mid}"]\`);
         if (cb) cb.checked = true;
       });
     }
   }
+
   openModal("expenseModal");
 }
+
 function saveExpense() {
   const idStr = document.getElementById("editingExpenseId").value;
   const amount = Number(document.getElementById("expenseAmount").value);
@@ -575,43 +544,55 @@ function saveExpense() {
       share
     });
   }
+
   saveAll();
   closeModal("expenseModal");
   renderAll();
 }
+
 function deleteExpense(id) {
   if (!confirm("이 지출 기록을 삭제할까요?")) return;
   expenses = expenses.filter(e=>e.id!==id);
   saveAll();
   renderAll();
 }
-
-/* --- CSV / 백업 --- */
+/* --- CSV / 백업 기능 --- */
 function exportCSV(type) {
   const gId = activeGroupId;
   let csv = "";
+
   if (type==="deposits") {
     csv += "member,amount,memo\n";
     deposits.filter(d=>d.groupId===gId || d.groupId===undefined)
       .forEach(d=>{
         const m = members.find(x=>x.id===d.memberId);
-        csv += \`"\${m?m.name:""}",\${d.amount},"$\{(d.memo||"").replace(/"/g,'""')}"\n\`;
+
+        const safeName = m ? m.name.replace(/"/g,'""') : "";
+        const safeMemo = (d.memo || "").replace(/"/g,'""');
+
+        csv += `"${safeName}",${d.amount},"${safeMemo}"\n`;
       });
+
   } else if (type==="expenses") {
     csv += "memo,amount,share,participants\n";
     expenses.filter(e=>e.groupId===gId || e.groupId===undefined)
       .forEach(e=>{
+        const safeMemo = (e.memo || "").replace(/"/g,'""');
         const names = e.members.map(id=>{
           const m = members.find(mm=>mm.id===id);
           return m?m.name:"";
-        }).join(";");
-        csv += \`"$\{(e.memo||"").replace(/"/g,'""')}",\${e.amount},\${e.share},"$\{names.replace(/"/g,'""')}"\n\`;
+        }).join(";").replace(/"/g,'""');
+
+        csv += `"${safeMemo}",${e.amount},${e.share},"${names}"\n`;
       });
+
   } else if (type==="balances") {
     const bal = calcBalances();
     csv += "member,balance\n";
+
     bal.forEach(b=>{
-      csv += \`"$\{b.name.replace(/"/g,'""')}",\${b.balance}\n\`;
+      const safeName = b.name.replace(/"/g,'""');
+      csv += `"${safeName}",${b.balance}\n`;
     });
   } else {
     return;
@@ -620,7 +601,7 @@ function exportCSV(type) {
   const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = \`moim_\${type}_\${new Date().toISOString().slice(0,10)}.csv\`;
+  a.download = `moim_${type}_${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -631,17 +612,20 @@ function exportBackup() {
   const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = \`moim_backup_\${new Date().toISOString().slice(0,10)}.json\`;
+  a.download = `moim_backup_${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
+
 function importBackup() {
   document.getElementById("backupFile").click();
 }
+
 function handleBackupFile(e) {
   const file = e.target.files[0];
   if (!file) return;
+
   const reader = new FileReader();
   reader.onload = ev => {
     try {
@@ -665,23 +649,29 @@ function handleBackupFile(e) {
 function calcBalances() {
   const gId = activeGroupId;
   const gm = members.filter(m=>m.groupId===gId || m.groupId===undefined);
+
   return gm.map(m=>{
     const dep = deposits
       .filter(d=> (d.groupId===gId || d.groupId===undefined) && d.memberId===m.id)
       .reduce((a,b)=>a+b.amount,0);
+
     const share = expenses
       .filter(e=> (e.groupId===gId || e.groupId===undefined))
       .map(e=> e.members.includes(m.id)?e.share:0)
       .reduce((a,b)=>a+b,0);
+
     return {name:m.name, balance:dep-share};
   });
 }
+
 function drawBalanceChart(bal) {
   const canvas = document.getElementById("balanceChart");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
+
   const w = canvas.width = canvas.clientWidth;
   const h = canvas.height;
+
   ctx.clearRect(0,0,w,h);
 
   if (!bal.length) return;
@@ -727,10 +717,13 @@ function renderMembersPage() {
   const gId = activeGroupId;
   const gm = members.filter(m=>m.groupId===gId || m.groupId===undefined);
   const container = document.getElementById("membersPage");
+
   if (!gm.length) {
-    container.innerHTML = `<div class="card">회원이 없습니다. 우측 하단 + 버튼으로 추가하세요.</div>`;
+    container.innerHTML =
+      `<div class="card">회원이 없습니다. 우측 하단 + 버튼으로 추가하세요.</div>`;
     return;
   }
+
   container.innerHTML = gm.map(m=>`
     <div class="card">
       <div class="card-title">${m.name}</div>
@@ -741,10 +734,12 @@ function renderMembersPage() {
     </div>
   `).join("");
 }
+
 function renderDepositPage() {
   const gId = activeGroupId;
   const gDep = deposits.filter(d=>d.groupId===gId || d.groupId===undefined);
   const container = document.getElementById("depositPage");
+
   let html = `
     <div class="card no-print">
       <div class="card-title">입금 내역</div>
@@ -752,6 +747,7 @@ function renderDepositPage() {
       <button class="secondary-btn" onclick="exportCSV('deposits')">입금 CSV 내보내기</button>
     </div>
   `;
+
   if (!gDep.length) {
     html += `<div class="card">입금 기록이 없습니다. + 버튼으로 추가하세요.</div>`;
   } else {
@@ -769,12 +765,15 @@ function renderDepositPage() {
       `;
     }).join("");
   }
+
   container.innerHTML = html;
 }
+
 function renderExpensePage() {
   const gId = activeGroupId;
   const gExp = expenses.filter(e=>e.groupId===gId || e.groupId===undefined);
   const container = document.getElementById("expensePage");
+
   let html = `
     <div class="card no-print">
       <div class="card-title">지출 내역</div>
@@ -782,6 +781,7 @@ function renderExpensePage() {
       <button class="secondary-btn" onclick="exportCSV('expenses')">지출 CSV 내보내기</button>
     </div>
   `;
+
   if (!gExp.length) {
     html += `<div class="card">지출 기록이 없습니다. + 버튼으로 추가하세요.</div>`;
   } else {
@@ -790,6 +790,7 @@ function renderExpensePage() {
         const m = members.find(mm=>mm.id===id);
         return m?m.name:"";
       }).join(", ");
+
       return `
         <div class="card">
           <div class="card-title">${e.memo || "지출"} – 총 ${e.amount.toLocaleString()}원</div>
@@ -803,8 +804,10 @@ function renderExpensePage() {
       `;
     }).join("");
   }
+
   container.innerHTML = html;
 }
+
 function renderBalancePage() {
   const container = document.getElementById("balancePage");
   const bal = calcBalances();
@@ -813,6 +816,7 @@ function renderBalancePage() {
   const totalDeposit = deposits
     .filter(d=>d.groupId===gId || d.groupId===undefined)
     .reduce((a,b)=>a+b.amount,0);
+
   const totalExpense = expenses
     .filter(e=>e.groupId===gId || e.groupId===undefined)
     .reduce((a,b)=>a+b.amount,0);
@@ -823,26 +827,30 @@ function renderBalancePage() {
       <div>총 입금: ${totalDeposit.toLocaleString()}원</div>
       <div>총 지출: ${totalExpense.toLocaleString()}원</div>
       <div>잔액: ${(totalDeposit-totalExpense).toLocaleString()}원</div>
+
       <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
         <button class="secondary-btn" style="flex:1;" onclick="exportCSV('balances')">정산 CSV</button>
         <button class="secondary-btn" style="flex:1;" onclick="window.print()">인쇄</button>
       </div>
     </div>
+
     <div class="card">
       <div class="card-title">회원별 정산</div>
       <div style="font-size:13px;margin-top:4px;">
         ${
           bal.length
-          ? bal.map(b=>`${b.name}: ${b.balance.toLocaleString()}원`).join("<br>")
-          : "회원이 없습니다."
+            ? bal.map(b=>`${b.name}: ${b.balance.toLocaleString()}원`).join("<br>")
+            : "회원이 없습니다."
         }
       </div>
     </div>
+
     <div class="card">
       <div class="card-title">잔액 차트</div>
       <canvas id="balanceChart" width="400" height="220"></canvas>
     </div>
   `;
+
   container.innerHTML = html;
   drawBalanceChart(bal);
 }
@@ -856,12 +864,11 @@ function renderAll() {
   renderBalancePage();
 }
 
+/* 초기 실행 */
 showPage("membersPage");
 renderAll();
 
-/* --- PWA Service Worker (inline) ---
-   ⚠ PWA 기능은 HTTPS(또는 localhost)에서 열 때만 정상 동작합니다.
-   파일을 직접 여는 file:// 방식에서는 PWA 설치가 되지 않습니다. */
+/* --- PWA Service Worker (inline) --- */
 if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
   const swCode = `
 self.addEventListener('install', event => {
