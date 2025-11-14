@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모임비 관리</title>
+
+<!-- 인라인 PWA manifest (data URI) -->
+<link rel="manifest" href="data:application/json,{
+  &quot;name&quot;: &quot;모임비 관리&quot;,
+  &quot;short_name&quot;: &quot;모임비&quot;,
+  &quot;start_url&quot;: &quot;.&quot;,
+  &quot;display&quot;: &quot;standalone&quot;,
+  &quot;background_color&quot;: &quot;#ffffff&quot;,
+  &quot;theme_color&quot;: &quot;#007aff&quot;
+}">
+
+<style>
+:root {
+  --bg: #f2f2f7;
+  --card-bg: #ffffff;
+  --text: #111111;
+  --muted-text: #666666;
+  --header-bg: #007aff;
+  --header-text: #ffffff;
+  --nav-bg: #ffffff;
+  --border: #d1d1d6;
+  --accent: #007aff;
+  --accent-soft: #e5f0ff;
+  --good: #34c759;
+  --bad: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card-bg: #1c1c1e;
+    --text: #f5f5f7;
+    --muted-text: #999999;
+    --header-bg: #0a84ff;
+    --header-text: #ffffff;
+    --nav-bg: #1c1c1e;
+    --border: #3a3a3c;
+    --accent: #0a84ff;
+    --accent-soft: #002b5e;
+    --good: #30d158;
+    --bad: #ff453a;
+  }
+}
+
+/* 기본 스타일 */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 110;
+  background: var(--header-bg);
+  color: var(--header-text);
+  text-align: center;
+  padding: 10px 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+header small {
+  display: block;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* 상단 컨트롤 */
+.top-controls {
+  margin: 8px 10px 2px 10px;
+  font-size: 13px;
+}
+.top-controls label {
+  font-weight: 500;
+  margin-right: 4px;
+}
+.top-controls select {
+  width: auto;
+  min-width: 140px;
+  display: inline-block;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  font-size: 13px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+.top-controls button {
+  font-size: 11px;
+  padding: 4px 8px;
+  margin-left: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+/* 페이지 */
+.page {
+  padding-bottom: 110px;
+}
+
+/* 카드 */
+.card {
+  background: var(--card-bg);
+  margin: 8px 10px;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  font-size: 14px;
+  border: 1px solid rgba(0,0,0,0.02);
+}
+.card-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.card-sub {
+  font-size: 11px;
+  color: var(--muted-text);
+  margin-bottom: 4px;
+}
+.card-actions {
+  text-align: right;
+  margin-top: 6px;
+}
+.card-actions button {
+  font-size: 11px;
+  margin-left: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.02);
+  color: var(--text);
+  padding: 4px 8px;
+}
+
+/* 하단 탭 */
+nav {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%;
+  background: rgba( var(--nav-bg-rgb,255,255,255), 0.94 );
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 120;
+}
+nav button {
+  flex: 1;
+  padding: 6px 4px 8px 4px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  color: var(--muted-text);
+}
+nav button.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* 모달 */
+.modal {
+  display: none;
+  position: fixed;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 200;
+}
+.modal-content {
+  margin: 80px auto;
+  width: 92%;
+  max-width: 420px;
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+/* 입력 요소 */
+input, select, textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin: 6px 0 10px 0;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+}
+textarea { min-height: 60px; resize: vertical; }
+
+/* 메인 액션 버튼 */
+button {
+  font-family: inherit;
+}
+.primary-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 4px;
+}
+.secondary-btn {
+  width: 100%;
+  padding: 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* 플로팅 + 버튼 */
+.add-btn {
+  position: fixed;
+  bottom: 78px;
+  right: 18px;
+  background: var(--accent);
+  color: white;
+  padding: 12px 15px;
+  border-radius: 50%;
+  font-size: 22px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+  z-index: 150;
+}
+
+/* 잔액 차트 */
+#balanceChart {
+  width: 100%;
+  max-width: 600px;
+  height: 220px;
+  display: block;
+  margin: 4px auto 0 auto;
+}
+
+/* 인쇄용 스타일 */
+@media print {
+  header, nav, .add-btn, .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+  .page {
+    padding: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  모임비 관리
+  <small>회원 · 입금 · 지출 · 정산 · 인쇄 · 백업</small>
+</header>
+
+<div class="top-controls no-print">
+  <label>모임:
+    <select id="groupSelect" onchange="changeGroup()"></select>
+  </label>
+  <button onclick="openModal('groupModal')">모임 추가</button>
+  <button onclick="exportBackup()">백업(JSON)</button>
+  <button onclick="importBackup()">복원(JSON)</button>
+  <input type="file" id="backupFile" style="display:none" accept="application/json" onchange="handleBackupFile(event)">
+</div>
+
+<div id="membersPage" class="page"></div>
+<div id="depositPage" class="page" style="display:none"></div>
+<div id="expensePage" class="page" style="display:none"></div>
+<div id="balancePage" class="page" style="display:none"></div>
+
+<nav class="no-print">
+  <button id="btnMembers" onclick="showPage('membersPage')">회원</button>
+  <button id="btnDeposit" onclick="showPage('depositPage')">입금</button>
+  <button id="btnExpense" onclick="showPage('expensePage')">지출</button>
+  <button id="btnBalance" onclick="showPage('balancePage')">정산</button>
+</nav>
+
+<button class="add-btn no-print" onclick="openFAB()">+</button>
+
+<!-- 모달: 모임 -->
+<div id="groupModal" class="modal">
+  <div class="modal-content">
+    <h3>모임 추가</h3>
+    <input id="groupName" placeholder="모임 이름 (예: 동창회)">
+    <button class="primary-btn" onclick="addGroup()">저장</button>
+    <button class="secondary-btn" onclick="closeModal('groupModal')">닫기</button>
+  </div>
+</div>
+
+<!-- 모달: 회원 -->
+<div id="memberModal" class="modal">
+  <div class="modal-content">
+    <h3>회원 추가/수정</h3>
+    <input id="memberName" placeholder="회원 이름">
+    <input type="hidden" id="editingMemberId">
+    <button class="primary-btn" onclick="saveMember()">저장</button>
+    <button class="secondary-btn" onclick="closeModal('memberModal')">닫기</button>
+  </div>
+</div>
+
+<!-- 모달: 입금 -->
+<div id="depositModal" class="modal">
+  <div class="modal-content">
+    <h3>입금 기록</h3>
+    <select id="depositMember"></select>
+    <input id="depositAmount" type="number" placeholder="금액">
+    <input id="depositMemo" placeholder="메모 (선택)">
+    <input type="hidden" id="editingDepositId">
+    <button class="primary-btn" onclick="saveDeposit()">저장</button>
+    <button class="secondary-btn" onclick="closeModal('depositModal')">닫기</button>
+  </div>
+</div>
+
+<!-- 모달: 지출 -->
+<div id="expenseModal" class="modal">
+  <div class="modal-content">
+    <h3>지출 기록</h3>
+    <input id="expenseAmount" type="number" placeholder="지출 금액">
+    <input id="expenseMemo" placeholder="지출 내용 (예: 회식)">
+    <div id="expenseMembers" style="font-size:13px;margin-top:4px;"></div>
+    <input type="hidden" id="editingExpenseId">
+    <button class="primary-btn" onclick="saveExpense()">저장</button>
+    <button class="secondary-btn" onclick="closeModal('expenseModal')">닫기</button>
+  </div>
+</div>
+
+<script>
+/* ---------------- 데이터 ---------------- */
+let groups   = JSON.parse(localStorage.getItem("groups")   || "[]");
+let members  = JSON.parse(localStorage.getItem("members")  || "[]");
+let deposits = JSON.parse(localStorage.getItem("deposits") || "[]");
+let expenses = JSON.parse(localStorage.getItem("expenses") || "[]");
+let activeGroupId = Number(localStorage.getItem("activeGroupId") || 0);
+
+/* 초기 모임 없으면 기본 모임 생성 */
+if (!groups.length) {
+  const gid = Date.now();
+  groups.push({ id: gid, name: "기본 모임" });
+  activeGroupId = gid;
+  saveAll();
+}
+
+function saveAll() {
+  localStorage.setItem("groups",   JSON.stringify(groups));
+  localStorage.setItem("members",  JSON.stringify(members));
+  localStorage.setItem("deposits", JSON.stringify(deposits));
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+  localStorage.setItem("activeGroupId", String(activeGroupId));
+}
+
+/* 모임 선택/추가 */
+function renderGroupSelect() {
+  const sel = document.getElementById("groupSelect");
+  sel.innerHTML = groups.map(g =>
+    `<option value="${g.id}" ${g.id===activeGroupId?"selected":""}>${g.name}</option>`
+  ).join("");
+}
+function changeGroup() {
+  activeGroupId = Number(document.getElementById("groupSelect").value);
+  saveAll();
+  renderAll();
+}
+function addGroup() {
+  const name = document.getElementById("groupName").value.trim();
+  if (!name) return alert("모임 이름을 입력하세요");
+  const id = Date.now();
+  groups.push({id, name});
+  activeGroupId = id;
+  document.getElementById("groupName").value = "";
+  closeModal("groupModal");
+  saveAll();
+  renderAll();
+}
+
+/* 페이지 전환 */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
+
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove("active"));
+  document.getElementById("btn"+id.replace("Page","")).classList.add("active");
+
+  renderAll();
+}
+
+/* 모달 열기/닫기 */
+function openModal(id){ document.getElementById(id).style.display='block'; }
+function closeModal(id){ document.getElementById(id).style.display='none'; }
+
+/* 플로팅 + 버튼 */
+function openFAB() {
+  if (document.getElementById("membersPage").style.display === "block") openMemberModal();
+  else if (document.getElementById("depositPage").style.display === "block") openDepositModal();
+  else if (document.getElementById("expensePage").style.display === "block") openExpenseModal();
+}
+
+/* --- 회원: 추가/수정/삭제 --- */
+function openMemberModal(id=null) {
+  document.getElementById("editingMemberId").value = id || "";
+  document.getElementById("memberName").value = "";
+  if (id) {
+    const m = members.find(x=>x.id===id);
+    if (m) document.getElementById("memberName").value = m.name;
+  }
+  openModal("memberModal");
+}
+function saveMember() {
+  const idStr = document.getElementById("editingMemberId").value;
+  const name  = document.getElementById("memberName").value.trim();
+  if (!name) return alert("이름을 입력하세요");
+
+  if (idStr) {
+    const id = Number(idStr);
+    const idx = members.findIndex(m=>m.id===id);
+    if (idx>-1) members[idx].name = name;
+  } else {
+    members.push({ id: Date.now(), groupId: activeGroupId, name });
+  }
+  saveAll();
+  closeModal("memberModal");
+  renderAll();
+}
+function deleteMember(id) {
+  const usedDeposit = deposits.some(d=>d.memberId===id);
+  const usedExpense = expenses.some(e=>e.members.includes(id));
+  if (usedDeposit || usedExpense) {
+    return alert("입금/지출 기록이 있어 삭제할 수 없습니다.");
+  }
+  if (!confirm("정말 삭제하시겠습니까?")) return;
+  members = members.filter(m=>m.id!==id);
+  saveAll();
+  renderAll();
+}
+
+/* --- 입금: 추가/수정/삭제 --- */
+function openDepositModal(id=null) {
+  document.getElementById("editingDepositId").value = id || "";
+  document.getElementById("depositAmount").value = "";
+  document.getElementById("depositMemo").value = "";
+
+  const sel = document.getElementById("depositMember");
+  const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
+  sel.innerHTML = gm.map(m=>`<option value="${m.id}">${m.name}</option>`).join("");
+
+  if (id) {
+    const d = deposits.find(x=>x.id===id);
+    if (d) {
+      sel.value = d.memberId;
+      document.getElementById("depositAmount").value = d.amount;
+      document.getElementById("depositMemo").value = d.memo || "";
+    }
+  }
+  openModal("depositModal");
+}
+function saveDeposit() {
+  const idStr = document.getElementById("editingDepositId").value;
+  const memberId = Number(document.getElementById("depositMember").value);
+  const amount   = Number(document.getElementById("depositAmount").value);
+  const memo     = document.getElementById("depositMemo").value.trim();
+
+  if (!memberId || !amount) return alert("회원과 금액을 입력하세요");
+
+  if (idStr) {
+    const id = Number(idStr);
+    const idx = deposits.findIndex(d=>d.id===id);
+    if (idx>-1) {
+      deposits[idx].memberId = memberId;
+      deposits[idx].amount   = amount;
+      deposits[idx].memo     = memo;
+    }
+  } else {
+    deposits.push({
+      id: Date.now(),
+      groupId: activeGroupId,
+      memberId,
+      amount,
+      memo
+    });
+  }
+  saveAll();
+  closeModal("depositModal");
+  renderAll();
+}
+function deleteDeposit(id) {
+  if (!confirm("이 입금 기록을 삭제할까요?")) return;
+  deposits = deposits.filter(d=>d.id!==id);
+  saveAll();
+  renderAll();
+}
+
+/* --- 지출: 추가/수정/삭제 --- */
+function openExpenseModal(id=null) {
+  document.getElementById("editingExpenseId").value = id || "";
+  document.getElementById("expenseAmount").value = "";
+  document.getElementById("expenseMemo").value = "";
+
+  const container = document.getElementById("expenseMembers");
+  const gm = members.filter(m=>m.groupId===activeGroupId || m.groupId===undefined);
+  container.innerHTML = gm.map(m=>`
+      <label style="display:block;margin-bottom:3px;">
+        <input type="checkbox" class="exp-check" value="${m.id}"> ${m.name}
+      </label>
+  `).join("");
+
+  if (id) {
+    const e = expenses.find(x=>x.id===id);
+    if (e) {
+      document.getElementById("expenseAmount").value = e.amount;
+      document.getElementById("expenseMemo").value = e.memo || "";
+      e.members.forEach(mid=>{
+        const cb = container.querySelector(\`input[value="\${mid}"]\`);
+        if (cb) cb.checked = true;
+      });
+    }
+  }
+  openModal("expenseModal");
+}
+function saveExpense() {
+  const idStr = document.getElementById("editingExpenseId").value;
+  const amount = Number(document.getElementById("expenseAmount").value);
+  const memo   = document.getElementById("expenseMemo").value.trim();
+  const selected = [...document.querySelectorAll(".exp-check:checked")].map(x=>Number(x.value));
+
+  if (!amount || !selected.length) return alert("금액과 참여자를 선택하세요");
+
+  const share = Math.round(amount / selected.length);
+
+  if (idStr) {
+    const id = Number(idStr);
+    const idx = expenses.findIndex(e=>e.id===id);
+    if (idx>-1) {
+      expenses[idx].amount  = amount;
+      expenses[idx].memo    = memo;
+      expenses[idx].members = selected;
+      expenses[idx].share   = share;
+    }
+  } else {
+    expenses.push({
+      id: Date.now(),
+      groupId: activeGroupId,
+      amount,
+      memo,
+      members: selected,
+      share
+    });
+  }
+  saveAll();
+  closeModal("expenseModal");
+  renderAll();
+}
+function deleteExpense(id) {
+  if (!confirm("이 지출 기록을 삭제할까요?")) return;
+  expenses = expenses.filter(e=>e.id!==id);
+  saveAll();
+  renderAll();
+}
+
+/* --- CSV / 백업 --- */
+function exportCSV(type) {
+  const gId = activeGroupId;
+  let csv = "";
+  if (type==="deposits") {
+    csv += "member,amount,memo\n";
+    deposits.filter(d=>d.groupId===gId || d.groupId===undefined)
+      .forEach(d=>{
+        const m = members.find(x=>x.id===d.memberId);
+        csv += \`"\${m?m.name:""}",\${d.amount},"$\{(d.memo||"").replace(/"/g,'""')}"\n\`;
+      });
+  } else if (type==="expenses") {
+    csv += "memo,amount,share,participants\n";
+    expenses.filter(e=>e.groupId===gId || e.groupId===undefined)
+      .forEach(e=>{
+        const names = e.members.map(id=>{
+          const m = members.find(mm=>mm.id===id);
+          return m?m.name:"";
+        }).join(";");
+        csv += \`"$\{(e.memo||"").replace(/"/g,'""')}",\${e.amount},\${e.share},"$\{names.replace(/"/g,'""')}"\n\`;
+      });
+  } else if (type==="balances") {
+    const bal = calcBalances();
+    csv += "member,balance\n";
+    bal.forEach(b=>{
+      csv += \`"$\{b.name.replace(/"/g,'""')}",\${b.balance}\n\`;
+    });
+  } else {
+    return;
+  }
+
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = \`moim_\${type}_\${new Date().toISOString().slice(0,10)}.csv\`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function exportBackup() {
+  const data = { groups, members, deposits, expenses, activeGroupId };
+  const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = \`moim_backup_\${new Date().toISOString().slice(0,10)}.json\`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+function importBackup() {
+  document.getElementById("backupFile").click();
+}
+function handleBackupFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      groups   = data.groups;
+      members  = data.members;
+      deposits = data.deposits || [];
+      expenses = data.expenses || [];
+      activeGroupId = data.activeGroupId || (groups[0] && groups[0].id);
+      saveAll();
+      renderAll();
+      alert("복원 완료!");
+    } catch (err) {
+      alert("복원 실패. 파일 형식을 확인하세요.");
+    }
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+/* --- 잔액 계산 & 차트 --- */
+function calcBalances() {
+  const gId = activeGroupId;
+  const gm = members.filter(m=>m.groupId===gId || m.groupId===undefined);
+  return gm.map(m=>{
+    const dep = deposits
+      .filter(d=> (d.groupId===gId || d.groupId===undefined) && d.memberId===m.id)
+      .reduce((a,b)=>a+b.amount,0);
+    const share = expenses
+      .filter(e=> (e.groupId===gId || e.groupId===undefined))
+      .map(e=> e.members.includes(m.id)?e.share:0)
+      .reduce((a,b)=>a+b,0);
+    return {name:m.name, balance:dep-share};
+  });
+}
+function drawBalanceChart(bal) {
+  const canvas = document.getElementById("balanceChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width = canvas.clientWidth;
+  const h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  if (!bal.length) return;
+
+  const maxAbs = Math.max(...bal.map(b=>Math.abs(b.balance))) || 1;
+  const margin = 40;
+  const centerX = w/2;
+  const rowH = h / (bal.length+1);
+
+  ctx.strokeStyle = "#999999";
+  ctx.beginPath();
+  ctx.moveTo(centerX, 10);
+  ctx.lineTo(centerX, h-10);
+  ctx.stroke();
+
+  bal.forEach((b,idx)=>{
+    const y = (idx+1)*rowH;
+    const ratio = (Math.abs(b.balance)/maxAbs) || 0;
+    const len = (w/2 - margin) * ratio;
+
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text') || "#000";
+    ctx.font = "12px -apple-system, system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(b.name, centerX-6, y+4);
+
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    if (b.balance>=0) {
+      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--good') || "#34c759";
+      ctx.moveTo(centerX, y);
+      ctx.lineTo(centerX+len, y);
+    } else {
+      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--bad') || "#ff3b30";
+      ctx.moveTo(centerX, y);
+      ctx.lineTo(centerX-len, y);
+    }
+    ctx.stroke();
+  });
+}
+
+/* --- 각 페이지 렌더링 --- */
+function renderMembersPage() {
+  const gId = activeGroupId;
+  const gm = members.filter(m=>m.groupId===gId || m.groupId===undefined);
+  const container = document.getElementById("membersPage");
+  if (!gm.length) {
+    container.innerHTML = `<div class="card">회원이 없습니다. 우측 하단 + 버튼으로 추가하세요.</div>`;
+    return;
+  }
+  container.innerHTML = gm.map(m=>`
+    <div class="card">
+      <div class="card-title">${m.name}</div>
+      <div class="card-actions">
+        <button onclick="openMemberModal(${m.id})">수정</button>
+        <button onclick="deleteMember(${m.id})">삭제</button>
+      </div>
+    </div>
+  `).join("");
+}
+function renderDepositPage() {
+  const gId = activeGroupId;
+  const gDep = deposits.filter(d=>d.groupId===gId || d.groupId===undefined);
+  const container = document.getElementById("depositPage");
+  let html = `
+    <div class="card no-print">
+      <div class="card-title">입금 내역</div>
+      <div class="card-sub">회원 회비 및 추가 입금을 기록합니다.</div>
+      <button class="secondary-btn" onclick="exportCSV('deposits')">입금 CSV 내보내기</button>
+    </div>
+  `;
+  if (!gDep.length) {
+    html += `<div class="card">입금 기록이 없습니다. + 버튼으로 추가하세요.</div>`;
+  } else {
+    html += gDep.map(d=>{
+      const m = members.find(x=>x.id===d.memberId);
+      return `
+        <div class="card">
+          <div class="card-title">${m?m.name:"(탈퇴 회원)"} – ${d.amount.toLocaleString()}원</div>
+          <div class="card-sub">${d.memo ? "메모: " + d.memo : ""}</div>
+          <div class="card-actions">
+            <button onclick="openDepositModal(${d.id})">수정</button>
+            <button onclick="deleteDeposit(${d.id})">삭제</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+  container.innerHTML = html;
+}
+function renderExpensePage() {
+  const gId = activeGroupId;
+  const gExp = expenses.filter(e=>e.groupId===gId || e.groupId===undefined);
+  const container = document.getElementById("expensePage");
+  let html = `
+    <div class="card no-print">
+      <div class="card-title">지출 내역</div>
+      <div class="card-sub">모임비 사용 내역과 참석자를 기록합니다.</div>
+      <button class="secondary-btn" onclick="exportCSV('expenses')">지출 CSV 내보내기</button>
+    </div>
+  `;
+  if (!gExp.length) {
+    html += `<div class="card">지출 기록이 없습니다. + 버튼으로 추가하세요.</div>`;
+  } else {
+    html += gExp.map(e=>{
+      const names = e.members.map(id=>{
+        const m = members.find(mm=>mm.id===id);
+        return m?m.name:"";
+      }).join(", ");
+      return `
+        <div class="card">
+          <div class="card-title">${e.memo || "지출"} – 총 ${e.amount.toLocaleString()}원</div>
+          <div class="card-sub">1인 부담: ${e.share.toLocaleString()}원</div>
+          <div style="font-size:13px;">참여: ${names}</div>
+          <div class="card-actions">
+            <button onclick="openExpenseModal(${e.id})">수정</button>
+            <button onclick="deleteExpense(${e.id})">삭제</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+  container.innerHTML = html;
+}
+function renderBalancePage() {
+  const container = document.getElementById("balancePage");
+  const bal = calcBalances();
+  const gId = activeGroupId;
+
+  const totalDeposit = deposits
+    .filter(d=>d.groupId===gId || d.groupId===undefined)
+    .reduce((a,b)=>a+b.amount,0);
+  const totalExpense = expenses
+    .filter(e=>e.groupId===gId || e.groupId===undefined)
+    .reduce((a,b)=>a+b.amount,0);
+
+  let html = `
+    <div class="card no-print">
+      <div class="card-title">요약</div>
+      <div>총 입금: ${totalDeposit.toLocaleString()}원</div>
+      <div>총 지출: ${totalExpense.toLocaleString()}원</div>
+      <div>잔액: ${(totalDeposit-totalExpense).toLocaleString()}원</div>
+      <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="secondary-btn" style="flex:1;" onclick="exportCSV('balances')">정산 CSV</button>
+        <button class="secondary-btn" style="flex:1;" onclick="window.print()">인쇄</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">회원별 정산</div>
+      <div style="font-size:13px;margin-top:4px;">
+        ${
+          bal.length
+          ? bal.map(b=>`${b.name}: ${b.balance.toLocaleString()}원`).join("<br>")
+          : "회원이 없습니다."
+        }
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">잔액 차트</div>
+      <canvas id="balanceChart" width="400" height="220"></canvas>
+    </div>
+  `;
+  container.innerHTML = html;
+  drawBalanceChart(bal);
+}
+
+/* 전체 렌더 */
+function renderAll() {
+  renderGroupSelect();
+  renderMembersPage();
+  renderDepositPage();
+  renderExpensePage();
+  renderBalancePage();
+}
+
+showPage("membersPage");
+renderAll();
+
+/* --- PWA Service Worker (inline) ---
+   ⚠ PWA 기능은 HTTPS(또는 localhost)에서 열 때만 정상 동작합니다.
+   파일을 직접 여는 file:// 방식에서는 PWA 설치가 되지 않습니다. */
+if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+  const swCode = `
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open('moim-cache-v1').then(c => c.addAll(['./']))
+  );
+});
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(r => r || fetch(event.request))
+  );
+});
+`;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(blob));
+}
+</script>
+
+</body>
+</html>
