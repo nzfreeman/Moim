@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모임비 관리</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<header>
+  모임비 관리
+  <small>회원 · 입금 · 도네이션 · 지출 · 정산 · 백업</small>
+</header>
+
+<div class="top-controls no-print">
+  <label>모임:
+    <select id="groupSelect"></select>
+  </label>
+  <button id="btnAddGroup">모임 추가</button>
+  <button id="btnExportBackup">백업(JSON)</button>
+  <button id="btnImportBackup">복원(JSON)</button>
+  <input type="file" id="backupFile" style="display:none" accept="application/json">
+</div>
+
+<!-- 페이지들 -->
+<div id="membersPage" class="page"></div>
+<div id="depositPage" class="page" style="display:none"></div>
+<div id="donationPage" class="page" style="display:none"></div>
+<div id="expensePage" class="page" style="display:none"></div>
+<div id="balancePage" class="page" style="display:none"></div>
+
+<!-- 하단 탭 -->
+<nav class="no-print">
+  <button id="btnMembersTab" data-target="membersPage" class="active">회원</button>
+  <button id="btnDepositTab" data-target="depositPage">입금</button>
+  <button id="btnDonationTab" data-target="donationPage">도네이션</button>
+  <button id="btnExpenseTab" data-target="expensePage">지출</button>
+  <button id="btnBalanceTab" data-target="balancePage">정산</button>
+</nav>
+
+<!-- 플로팅 + 버튼 -->
+<button class="add-btn no-print" id="fabButton">+</button>
+
+<!-- 모달: 모임 -->
+<div id="groupModal" class="modal">
+  <div class="modal-content">
+    <h3>모임 추가</h3>
+    <input id="groupName" placeholder="모임 이름 (예: 여성선교회 2025년)">
+    <div class="modal-actions">
+      <button class="primary-btn" id="saveGroupBtn">저장</button>
+      <button class="secondary-btn" data-close="groupModal">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 회원 -->
+<div id="memberModal" class="modal">
+  <div class="modal-content">
+    <h3>회원 추가/수정</h3>
+    <input id="memberName" placeholder="회원 이름">
+    <input type="hidden" id="editingMemberId">
+    <div class="modal-actions">
+      <button class="primary-btn" id="saveMemberBtn">저장</button>
+      <button class="secondary-btn" data-close="memberModal">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 입금(상세) -->
+<div id="depositModal" class="modal">
+  <div class="modal-content">
+    <h3>입금 기록 (상세)</h3>
+    <select id="depositMember"></select>
+    <input id="depositAmount" type="number" inputmode="decimal" placeholder="금액 (원)">
+    <input id="depositMemo" placeholder="메모 (선택)">
+    <input type="hidden" id="editingDepositId">
+    <div class="modal-actions">
+      <button class="primary-btn" id="saveDepositBtn">저장</button>
+      <button class="secondary-btn" data-close="depositModal">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 도네이션(상세) -->
+<div id="donationModal" class="modal">
+  <div class="modal-content">
+    <h3>도네이션 기록 (상세)</h3>
+    <select id="donationMember"></select>
+    <input id="donationAmount" type="number" inputmode="decimal" placeholder="금액 (원)">
+    <input id="donationMemo" placeholder="메모 (선택)">
+    <input type="hidden" id="editingDonationId">
+    <div class="modal-actions">
+      <button class="primary-btn" id="saveDonationBtn">저장</button>
+      <button class="secondary-btn" data-close="donationModal">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모달: 지출 -->
+<div id="expenseModal" class="modal">
+  <div class="modal-content">
+    <h3>지출 기록</h3>
+    <input id="expenseAmount" type="number" inputmode="decimal" placeholder="총 지출 금액 (원)">
+    <input id="expenseMemo" placeholder="지출 내용 (예: 회식)">
+    <div id="expenseMembers" class="checklist"></div>
+    <input type="hidden" id="editingExpenseId">
+    <div class="modal-actions">
+      <button class="primary-btn" id="saveExpenseBtn">저장</button>
+      <button class="secondary-btn" data-close="expenseModal">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
