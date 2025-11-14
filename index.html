@@ -6,15 +6,8 @@
 <title>모임비 관리</title>
 
 <!-- 인라인 PWA manifest -->
-<link rel="manifest" href='data:application/json,{
-  "name": "모임비 관리",
-  "short_name": "모임비",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#007aff"
-}'>
-
+<link rel="manifest" href="manifest.json">
+  
 <style>
 :root {
   --bg: #f2f2f7;
@@ -504,13 +497,13 @@ function openExpenseModal(id=null) {
     if (e) {
       document.getElementById("expenseAmount").value = e.amount;
       document.getElementById("expenseMemo").value = e.memo || "";
-
+      
       e.members.forEach(mid=>{
-        const cb = container.querySelector(\`input[value="\${mid}"]\`);
+       const cb = container.querySelector('input[value="' + mid + '"]');
         if (cb) cb.checked = true;
-      });
-    }
-  }
+         });
+        }
+       }
 
   openModal("expenseModal");
 }
@@ -868,22 +861,13 @@ function renderAll() {
 showPage("membersPage");
 renderAll();
 
-/* --- PWA Service Worker (inline) --- */
-if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-  const swCode = `
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open('moim-cache-v1').then(c => c.addAll(['./']))
-  );
-});
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(r => r || fetch(event.request))
-  );
-});
-`;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob));
+  /* --- PWA Service Worker (external) --- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(err => {
+      console.error('SW registration failed:', err);
+    });
+  });
 }
 </script>
 
